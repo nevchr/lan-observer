@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LAN Observer</title>
+</head>
+
+<body>
+
+    <main>
+
+        <header>
+            <div>
+                <h1>LAN Observer</h1>
+                <p class="subtitle">
+                    Local network device monitor
+                </p>
+                <p class="last-scan">
+                    Last scan:
+                    {% if last_scan %}
+                        {{ last_scan | pretty_time }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </p>
+            </div>
+
+            <form id="scan-form" action="/scan" method="POST">
+                <button id="scan-button" type="submit">
+                    Scan Network
+                </button>
+            </form>
+        </header>
+
+        <section>
+        <h2>Recognized Devices</h2>
+
+        <div class="stats-grid">
+
+        <div class="stat-card">
+            <span>{{ stats.online }}</span>
+            <p>Online</p>
+        </div>
+
+        <div class="stat-card">
+            <span>{{ stats.recognized }}</span>
+            <p>Recognized</p>
+        </div>
+
+        <div class="stat-card">
+            <span>{{ stats.unknown }}</span>
+            <p>Unknown</p>
+        </div>
+
+        <div class="stat-card">
+            <span>{{ stats.total }}</span>
+            <p>Total Seen</p>
+        </div>
+
+    </div>
+
+    <div class="device-grid">
+        {% for device in devices %}
+            {% if device.known %}
+
+                <div class="device-card">
+
+                    <h3>
+                        {{ device.nickname or device.hostname or "Unknown Device" }}
+                    </h3>
+
+                    <p>IP: {{ device.ip }}</p>
+                    <p>MAC: {{ device.mac }}</p>
+
+                    <p>
+                        Vendor:
+                        {{ device.vendor or "Unknown" }}
+                    </p>
+
+                    <p>
+                        Hostname:
+                        {{ device.hostname or "Unknown" }}
+                    </p>
+
+                    <p>
+                        Last seen:
+                        {{ device.last_seen | pretty_time }}
+                    </p>
+
+                    {% if device.online %}
+                        <span class="status online">
+                            ONLINE
+                        </span>
+                    {% else %}
+                        <span class="status offline">
+                            OFFLINE
+                        </span>
+                    {% endif %}
+
+                    <form
+                        action="/device/update"
+                        method="POST"
+                        class="device-form"
+                    >
+                        <input
+                            type="hidden"
+                            name="mac"
+                            value="{{ device.mac }}"
+                        >
+
+                        <input
+                            type="text"
+                            name="nickname"
+                            placeholder="Device name"
+                            value="{{ device.nickname or '' }}"
+                        >
+
+                        <label class="known-toggle">
+                            <input
+                                type="checkbox"
+                                name="known"
+                                checked
+                            >
+                            Recognized device
+                        </label>
+
+                        <button type="submit">
+                            Save
+                        </button>
+                    </form>
+
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+
+<section class="unknown-section">
+    <h2>Unknown Devices</h2>
+
+        <div class="device-grid">
+            {% for device in devices %}
+                {% if not device.known %}
+
+                    <div class="device-card unknown-card">
+                        {% if device.is_new %}
+                            <span class="new-badge">
+                                NEW DEVICE
+                            </span>
+                        {% endif %}
+                        <h3>
+                            {{ device.hostname or "Unknown Device" }}
+                        </h3>
+
+                        <p>IP: {{ device.ip }}</p>
+                        <p>MAC: {{ device.mac }}</p>
+
+                        <p>
+                        Vendor:
+                        {{ device.vendor or "Unknown" }}
+                        </p>
+
+                        <p>
+                            Hostname:
+                            {{ device.hostname or "Unknown" }}
+                        </p>
+
+                        <p>
+                            First seen:
+                            {{ device.first_seen | pretty_time }}
+                        </p>
+
+                        {% if device.online %}
+                            <span class="status online">
+                                ONLINE
+                            </span>
+                        {% else %}
+                            <span class="status offline">
+                                OFFLINE
+                            </span>
+                        {% endif %}
+
+                        <form
+                            action="/device/update"
+                            method="POST"
+                            class="device-form"
+                        >
+                            <input
+                                type="hidden"
+                                name="mac"
+                                value="{{ device.mac }}"
+                            >
+
+                            <input
+                                type="text"
+                                name="nickname"
+                                placeholder="Give this device a name"
+                            >
+
+                            <label class="known-toggle">
+                                <input
+                                    type="checkbox"
+                                    name="known"
+                                >
+                                Recognized device
+                            </label>
+
+                            <button type="submit">
+                                Save
+                            </button>
+                        </form>
+
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    </main>
+
+    <script>
+    const scanForm = document.getElementById("scan-form");
+    const scanButton = document.getElementById("scan-button");
+
+    scanForm.addEventListener("submit", () => {
+        scanButton.disabled = true;
+        scanButton.textContent = "Scanning...";
+    });
+</script>
+
+</body>
+
+</html>
