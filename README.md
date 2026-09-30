@@ -77,7 +77,12 @@ The service binds to `127.0.0.1`. Requests validate local hosts and require a se
 
 ## Development and packaging
 
+Use Python 3.12+ on Windows. Create the developer environment separately from the runtime environment:
+
 ```powershell
+py -3.12 -m venv .venv-dev
+.\.venv-dev\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv-dev\Scripts\python.exe -m pip install ruff
 .\.venv-dev\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv-dev\Scripts\python.exe scripts\demo.py
 .\.venv-dev\Scripts\python.exe -m pip install build setuptools wheel pyinstaller pip-audit
