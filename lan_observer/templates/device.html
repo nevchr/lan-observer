@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% block title %}{{ device|display_name }} · LAN Observer{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ session.get('inventory_url',url_for('index',network=device.network_id)) }}">← Back to inventory</a>
+<div class="page-heading"><div><p class="eyebrow">DEVICE DETAILS</p><h1>{{ device|display_name }}</h1><p class="muted">{{ device|presence }} · {{ device.observed_at|pretty_time }}</p></div><span class="badge {{ 'review' if not device.reviewed else '' }}">{{ 'Needs review' if not device.reviewed else 'Reviewed' }}</span></div>
+{% for network in networks %}{% if network.id==device.network_id and not network.scope %}<section class="panel"><h2>Link imported device to a network</h2><p class="muted">Choose the network this device belongs to. If its MAC already exists there, an empty name is filled from the import and conflicts are flagged for review. The original record is retained in the archive.</p><form action="{{ url_for('assign_legacy',device_id=device.id) }}" method="post" class="inline-fields"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><div><label for="assign-network">Destination network</label><select id="assign-network" name="network_id" required><option value="">Choose a network</option>{% for destination in networks %}{% if destination.scope %}<option value="{{ destination.id }}">{{ destination.name }}</option>{% endif %}{% endfor %}</select></div><button>Link to network</button></form></section>{% endif %}{% endfor %}
+<div class="detail-grid"><section class="panel"><h2>Name and review</h2>
+{% if form_error %}<p class="notice danger" id="form-error" role="alert">{{ form_error }}</p>{% endif %}
+<form method="post" class="stack" data-unsaved>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div><label for="nickname">Device name</label><input id="nickname" name="nickname" maxlength="80" value="{{ device.nickname }}" {% if form_error %}aria-describedby="form-error"{% endif %}><p class="hint">Optional. Your name is preserved independently of discovery and recognition.</p></div>
+  <div><label for="notes">Notes and tags</label><textarea id="notes" name="notes" rows="5" maxlength="2000">{{ device.notes }}</textarea><p class="hint">Add a location, purpose, or searchable tags such as #printer.</p></div>
+  <label class="check"><input type="checkbox" name="known" {% if device.known %}checked{% endif %}> I recognize this device</label>
+  <label class="check"><input type="checkbox" name="reviewed" {% if device.reviewed %}checked{% endif %}> I have reviewed this observation</label>
+  <label class="check"><input type="checkbox" name="archived" {% if device.archived %}checked{% endif %}> Archive this device</label>
+  <p class="hint">Archiving preserves history. A future observation restores the device for review. Recognition is not a security assessment.</p>
+  <button class="primary" type="submit">Save device</button>
+</form></section>
+<section class="panel"><h2>Observed information</h2><dl class="facts">
+<dt>IP address</dt><dd class="mono">{{ device.ip or 'Not available' }}</dd>
+<dt>MAC address</dt><dd><span class="mono">{{ device.mac or 'Not available' }}</span> {% if device.mac %}<button type="button" class="copy" data-copy="{{ device.mac }}" aria-label="Copy MAC address">Copy</button><span class="copy-feedback" role="status"></span>{% endif %}</dd>
+<dt>Hostname</dt><dd>{{ device.hostname or 'Not available' }}</dd><dt>Manufacturer</dt><dd>{{ device.vendor or 'Not available' }}</dd>
+<dt>First recorded</dt><dd>{{ device.first_seen|pretty_time }}</dd><dt>Last confirmed response / local presence</dt><dd>{{ device.last_confirmed|pretty_time }}</dd>
+<dt>Latest observation</dt><dd>{{ device.observed_at|pretty_time }}</dd><dt>Evidence</dt><dd>{{ device|presence }}</dd></dl>
+<p class="hint">Manufacturer data comes from your imported local vendor list. Missing lookups preserve previously known values. Private or randomized MAC addresses can change identity and make manufacturer information unreliable.</p></section></div>
+<section class="panel"><h2>Device timeline</h2>{% if events %}<ol class="timeline">{% for event in events %}<li><time>{{ event.at|pretty_time }}</time><div><strong>{{ event.kind }}</strong><p>{{ event.detail|friendly_edit_detail }}</p>{% if event.scan_id %}<a href="{{ url_for('scan_detail',scan_id=event.scan_id) }}">Scan #{{ event.scan_id }}</a>{% endif %}</div></li>{% endfor %}</ol>{% else %}<p class="muted">No changes recorded yet. Imported data does not include historical scan events.</p>{% endif %}</section>
+<section class="panel"><h2>Recent scan evidence</h2><p class="muted">Up to 30 retained observations. These do not measure continuous uptime or exact disconnection times.</p><ul class="observation-list">{% for observation in observations %}<li><a href="{{ url_for('scan_detail',scan_id=observation.scan_id) }}">Scan #{{ observation.scan_id }}</a> · {{ observation.ip }} · {{ observation.evidence|evidence_label }} · {{ observation.observed_at|pretty_time }}</li>{% else %}<li>No retained scan evidence.</li>{% endfor %}</ul></section>
+{% endblock %}

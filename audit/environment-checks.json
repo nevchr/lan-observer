@@ -1,0 +1,102 @@
+{
+  "syntax": "4 files compile",
+  "requirements_encoding": "UTF-16 BOM",
+  "dependency_pins": [
+    {
+      "name": "aiofiles",
+      "installed": "25.1.0",
+      "matches": true
+    },
+    {
+      "name": "aiohappyeyeballs",
+      "installed": "2.7.1",
+      "matches": true
+    },
+    {
+      "name": "aiohttp",
+      "installed": "3.14.3",
+      "matches": true
+    },
+    {
+      "name": "aiosignal",
+      "installed": "1.4.0",
+      "matches": true
+    },
+    {
+      "name": "attrs",
+      "installed": "26.1.0",
+      "matches": true
+    },
+    {
+      "name": "blinker",
+      "installed": "1.9.0",
+      "matches": true
+    },
+    {
+      "name": "click",
+      "installed": "8.4.2",
+      "matches": true
+    },
+    {
+      "name": "colorama",
+      "installed": "0.4.6",
+      "matches": true
+    },
+    {
+      "name": "Flask",
+      "installed": "3.1.3",
+      "matches": true
+    },
+    {
+      "name": "frozenlist",
+      "installed": "1.8.0",
+      "matches": true
+    },
+    {
+      "name": "idna",
+      "installed": "3.19",
+      "matches": true
+    },
+    {
+      "name": "itsdangerous",
+      "installed": "2.2.0",
+      "matches": true
+    },
+    {
+      "name": "Jinja2",
+      "installed": "3.1.6",
+      "matches": true
+    },
+    {
+      "name": "mac-vendor-lookup",
+      "installed": "0.1.15",
+      "matches": true
+    },
+    {
+      "name": "MarkupSafe",
+      "installed": "3.0.3",
+      "matches": true
+    },
+    {
+      "name": "multidict",
+      "installed": "6.7.1",
+      "matches": true
+    },
+    {
+      "name": "propcache",
+      "installed": "0.5.2",
+      "matches": true
+    },
+    {
+      "name": "Werkzeug",
+      "installed": "3.1.8",
+      "matches": true
+    },
+    {
+      "name": "yarl",
+      "installed": "1.24.5",
+      "matches": true
+    }
+  ],
+  "last_scan_contrast": 3.388705983286855
+}

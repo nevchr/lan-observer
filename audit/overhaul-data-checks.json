@@ -1,0 +1,14 @@
+{
+  "legacy_migration": {
+    "rows": 6,
+    "merged": 0
+  },
+  "original_database_unchanged": true,
+  "raw_legacy_records_retained": 6,
+  "performance_1000_devices": {
+    "requests": 20,
+    "max_ms": 62.91,
+    "median_ms": 20.45,
+    "p95_ms": 26.9
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "python": "3.12.14",
+  "flask": "3.1.3",
+  "mac_vendor_lookup": "0.1.15",
+  "user_database_unchanged": true,
+  "network_scans_performed": 0,
+  "findings": [
+    {
+      "id": "B01",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "ping_responders": 0,
+        "cached_device_online": 1
+      }
+    },
+    {
+      "id": "B02",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "identities": 2,
+        "recognized_online": 0
+      }
+    },
+    {
+      "id": "B03",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "discovered": 2,
+        "stored": 1
+      }
+    },
+    {
+      "id": "B04",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "saved_name_hidden": true,
+        "name_after_recognize": ""
+      }
+    },
+    {
+      "id": "B05",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "other_network_device_forced_offline": true
+      }
+    },
+    {
+      "id": "B06",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "dns_exception_escaped": true,
+        "scan_http": 500
+      }
+    },
+    {
+      "id": "B07",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "arp_exit": 1,
+        "scan_http": 302,
+        "last_scan_set": true,
+        "previous_device_online": 0
+      }
+    },
+    {
+      "id": "B08",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "statuses": [
+          302,
+          302
+        ],
+        "newer_scan_ip": "192.0.2.22",
+        "final_ip": "192.0.2.11",
+        "errors": []
+      }
+    },
+    {
+      "id": "B09",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "edit_http": 302,
+        "scan_http": 302,
+        "note": "Server test client only; browser exploit not tested"
+      }
+    },
+    {
+      "id": "B10",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "alternate_directory_count": 0,
+        "original_fixture_count": 1
+      }
+    },
+    {
+      "id": "B11",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "hostname": "Unknown",
+        "vendor": "Unknown"
+      }
+    },
+    {
+      "id": "B12",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "last_observation": "2000-01-01",
+        "online_label_still_rendered": true
+      }
+    },
+    {
+      "id": "B13",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "committed_devices": 1,
+        "last_scan": "2000-01-01T12:00:00"
+      }
+    },
+    {
+      "id": "B14",
+      "outcome": "CONFIRMED",
+      "evidence": {
+        "automatic_vendor_download_attempts": 1,
+        "note": "Download mocked; no outbound request performed"
+      }
+    }
+  ],
+  "positive_controls": {
+    "html_escaped": true,
+    "sql_values_parameterized": true,
+    "stable_mac_retains_recognition_and_name": true,
+    "empty_dashboard_http_200": true
+  }
+}

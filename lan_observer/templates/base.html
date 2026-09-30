@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light"><meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}LAN Observer{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static',filename='icon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static',filename='app.css') }}">
+  <script src="{{ url_for('static',filename='app.js') }}" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark" aria-hidden="true">◉</span> LAN Observer <span class="local-tag">LOCAL</span></a>
+    <nav aria-label="Main navigation">
+      <a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}aria-current="page"{% endif %}>Inventory</a>
+      <a href="{{ url_for('history') }}" {% if request.endpoint=='history' %}aria-current="page"{% endif %}>History</a>
+      <a href="{{ url_for('settings') }}" {% if request.endpoint=='settings' %}aria-current="page"{% endif %}>Settings</a>
+    </nav>
+  </header>
+  <main id="content">
+    {% for message in get_flashed_messages() %}<div class="notice success" role="status">{{ message }}</div>{% endfor %}
+    {% if active_scan and request.endpoint!='scan_detail' %}<div class="notice" role="status">A scan is {{ active_scan.status }}. <a href="{{ url_for('scan_detail',scan_id=active_scan.id) }}">View progress</a></div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer><span>Local inventory. Timestamped evidence.</span><span>LAN Observer {{ version }} · Windows IPv4</span></footer>
+</div>
+</body></html>

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading">
+  <div><p class="eyebrow">YOUR NETWORK, IN VIEW</p><h1>Inventory</h1><p class="muted">Understand what was observed, when, and where.</p></div>
+  {% if configured_networks %}<form action="{{ url_for('start_scan') }}" method="post" class="scan-action">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label for="scan-network">Network to scan</label>
+    <div class="inline-fields"><select id="scan-network" name="network_id" required>
+      <option value="">Choose a network</option>{% for network in configured_networks %}<option value="{{ network.id }}" data-name="{{ network.name }}" data-scope="{{ network.scope }}" {% if scan_selected==network.id %}selected{% endif %}>{{ network.name }} · {{ network.scope }}</option>{% endfor %}
+    </select><button class="primary" type="submit">Scan network <span aria-hidden="true">↗</span></button></div>
+    <p class="hint" id="scan-selection" aria-live="polite">{% for network in configured_networks %}{% if scan_selected==network.id %}Selected: {{ network.name }} · {{ network.scope }}{% endif %}{% endfor %}{% if not scan_selected %}Choose a network to see its range.{% endif %}</p>
+  </form>{% endif %}
+</div>
+{% if not configured_networks %}
+<section class="welcome panel"><div class="welcome-symbol" aria-hidden="true">◉</div><p class="eyebrow">READY WHEN YOU ARE</p><h2>A clearer picture of your network</h2><p>Choose an adapter and a scan range to start your inventory. Your devices stay on this computer. No account or cloud service needed.</p><a class="button primary" href="{{ url_for('settings') }}">Set up a network</a><p class="muted small">Already used LAN Observer? Import your existing database in Settings.</p></section>
+{% endif %}
+{% if networks %}
+<section class="metrics" aria-label="Inventory summary">
+  <a class="metric" href="{{ url_for('index',network=selected,state='responded') }}"><span class="metric-label">Recently confirmed</span><strong>{{ stats.responded }}</strong><span class="muted small">Within the last 15 minutes</span></a>
+  <a class="metric" href="{{ url_for('index',network=selected,state='review') }}"><span class="metric-label">Needs review</span><strong class="amber">{{ stats.review }}</strong><span class="muted small">Your acknowledgment is pending</span></a>
+  <a class="metric" href="{{ url_for('index',network=selected,state='recognized') }}"><span class="metric-label">Recognized</span><strong>{{ stats.recognized }}</strong><span class="muted small">Devices you recognize</span></a>
+  <a class="metric" href="{{ url_for('index',network=selected) }}"><span class="metric-label">Total recorded</span><strong>{{ stats.total }}</strong><span class="muted small">Excluding archived devices</span></a>
+</section>
+{% if latest %}<div class="snapshot"><span class="dot" aria-hidden="true"></span><span>Latest attempt: <a href="{{ url_for('scan_detail',scan_id=latest.id) }}">{{ latest.status|capitalize }}</a> · {{ latest.finished|pretty_time }} · {{ latest.network_name }}. Presence is an observation, not a continuous connection check.</span></div>{% endif %}
+<section class="panel inventory-panel" aria-labelledby="inventory-title">
+  <div class="section-heading"><h2 id="inventory-title">Devices <span class="count">{{ total }}</span></h2><a href="{{ url_for('index',network=selected,state='archived') }}">View archive</a></div>
+  <form class="filters" method="get">
+    <div class="search-field"><label for="search">Search devices</label><input type="search" name="q" id="search" value="{{ request.args.get('q','') }}" placeholder="Name, IP or MAC"></div>
+    <div class="network-field"><label for="network-filter">Network</label><select id="network-filter" name="network"><option value="">All saved networks</option>{% for network in networks %}<option value="{{ network.id }}" {% if selected==network.id %}selected{% endif %}>{{ network.name }}</option>{% endfor %}</select></div>
+    <div><label for="state-filter">Show</label><select id="state-filter" name="state">{% for value,label in [('', 'Active inventory'),('review','Needs review'),('recognized','Recognized'),('responded','Recently confirmed'),('archived','Archived')] %}<option value="{{ value }}" {% if request.args.get('state','')==value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div><label for="vendor-filter">Manufacturer</label><select name="vendor" id="vendor-filter"><option value="">All manufacturers</option>{% for vendor in vendors %}<option {% if request.args.get('vendor')==vendor %}selected{% endif %}>{{ vendor }}</option>{% endfor %}</select></div>
+    <div><label for="sort">Sort by</label><select name="sort" id="sort">{% for value,label in [('seen','Last observed'),('name','Name'),('ip','IP address')] %}<option value="{{ value }}" {% if request.args.get('sort','seen')==value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="filter-actions"><button type="submit">Apply</button><a class="small" href="{{ url_for('index',network=selected) }}">Clear</a></div>
+  </form>
+  {% if devices %}<table class="device-table"><caption class="sr-only">Saved devices and their latest observations</caption><thead><tr><th scope="col">Device</th><th scope="col">Latest evidence</th><th scope="col">Address</th><th scope="col">Manufacturer</th><th scope="col">Review</th></tr></thead><tbody>
+  {% for device in devices %}<tr>
+    <td data-label="Device"><a class="device-name" href="{{ url_for('device_detail',device_id=device.id) }}">{{ device|display_name }}</a><span class="cell-subtitle">{{ device.network_name }}</span></td>
+    <td data-label="Latest evidence"><span class="badge {% if device|presence in ['Responded in scan','This computer'] %}positive{% endif %}">{{ device|presence }}</span><span class="cell-subtitle">{{ device.observed_at|pretty_time }}</span></td>
+    <td data-label="Address"><span class="mono">{{ device.ip or 'Not available' }}</span><span class="cell-subtitle mono">{{ device.mac or 'MAC unavailable' }}</span></td>
+    <td data-label="Manufacturer">{{ device.vendor or 'Not available' }}</td>
+    <td data-label="Review"><span class="badge {% if not device.reviewed %}review{% endif %}">{{ 'Reviewed' if device.reviewed else 'Needs review' }}</span><span class="cell-subtitle">{{ 'Recognized' if device.known else 'Unrecognized' }}</span></td>
+  </tr>{% endfor %}</tbody></table>
+  {% else %}<div class="empty"><h3>{{ 'No matching devices' if request.args else 'No devices recorded yet' }}</h3><p>Run a scan on a configured network, import your legacy inventory, or clear the filters.</p></div>{% endif %}
+  <div class="pagination"><span>{{ total }} result{{ '' if total==1 else 's' }} · Page {{ page }}</span><div>{% if page>1 %}<a href="{{ url_for('index', **dict(request.args, page=page-1)) }}">Previous</a>{% endif %}{% if page*50<total %}<a href="{{ url_for('index', **dict(request.args, page=page+1)) }}">Next</a>{% endif %}</div></div>
+</section>
+{% if unidentified %}<section class="panel"><h2>Observations without a MAC address</h2><p class="muted">These remain visible as scan evidence. An IP address alone is not a permanent device identity.</p><ul class="observation-list">{% for item in unidentified %}<li><span class="mono">{{ item.ip }}</span> · {{ item.evidence|evidence_label }} · {{ item.observed_at|pretty_time }} · <a href="{{ url_for('scan_detail',scan_id=item.scan_id) }}">Scan #{{ item.scan_id }}</a></li>{% endfor %}</ul></section>{% endif %}
+{% endif %}
+{% endblock %}

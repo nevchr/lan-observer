@@ -1,0 +1,39 @@
+{
+  "date": "2026-09-22",
+  "data": "Synthetic only; actual application template and CSS",
+  "desktop": {
+    "viewport_width": 1280,
+    "document_scroll_width": 1265,
+    "long_hostname_card_client_width": 354,
+    "long_hostname_card_scroll_width": 530
+  },
+  "mobile_populated": {
+    "viewport_width": 390,
+    "viewport_height": 844,
+    "document_client_width": 375,
+    "document_scroll_width": 546,
+    "long_hostname_card_client_width": 343,
+    "long_hostname_card_scroll_width": 530
+  },
+  "mobile_empty": {
+    "viewport_width": 320,
+    "viewport_height": 800,
+    "document_client_width": 320,
+    "document_scroll_width": 320,
+    "observation": "No onboarding text beyond Scan Network and Last scan: Never; empty section headings remain"
+  },
+  "name_inputs": {
+    "count": 3,
+    "associated_label_count_each": 0,
+    "aria_label_count": 0,
+    "placeholder_present": true
+  },
+  "last_scan": {
+    "foreground": "#666666",
+    "background": "#0b0d10",
+    "font_size_px": 12,
+    "contrast_ratio": 3.388705983286855
+  },
+  "browser_warning_error_logs_returned": 0,
+  "limits": ["No real mobile device", "No full screen-reader audit", "No browser exploit test", "No 200 percent zoom test"]
+}

@@ -1,0 +1,14 @@
+{
+  "http": {
+    "/": 200,
+    "/history": 200,
+    "/settings": 200,
+    "/diagnostics": 200,
+    "/static/app.css": 200,
+    "/static/app.js": 200
+  },
+  "duplicate_instance_rejected": true,
+  "occupied_port_rejected": true,
+  "arbitrary_working_directory": true,
+  "limitation": "Process termination exercised; clean-machine, signed-installer and long-duration tests not performed"
+}
